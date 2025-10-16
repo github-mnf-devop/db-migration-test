@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-postgres
+  namespace: db-migration-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-postgres
+  template:
+    metadata:
+      labels:
+        app: test-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          env:
+            - name: POSTGRES_DB
+              value: demo
+            - name: POSTGRES_USER
+              value: demo_user
+            - name: POSTGRES_PASSWORD
+              value: demo_pass
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: pgdata
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-postgres
+  namespace: db-migration-demo
+spec:
+  selector:
+    app: test-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP

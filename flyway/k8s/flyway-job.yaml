@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flyway-migration
+  namespace: db-migration-demo
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: flyway
+        image: flyway/flyway:10
+        command: ["flyway", "migrate", "-configFiles=/flyway/conf/flyway.conf"]
+        volumeMounts:
+          - name: flyway-sql
+            mountPath: /flyway/sql
+          - name: flyway-conf
+            mountPath: /flyway/conf
+      volumes:
+        - name: flyway-sql
+          configMap:
+            name: flyway-sql
+        - name: flyway-conf
+          configMap:
+            name: flyway-conf
