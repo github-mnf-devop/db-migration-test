@@ -8,9 +8,3 @@ CREATE TABLE IF NOT EXISTS users_audit (
     action_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     details TEXT
 );
-
--- Optional: seed a few audit events
-INSERT INTO users_audit (user_id, action, details)
-VALUES
-(1, 'LOGIN', 'User 1 logged in'),
-(2, 'PASSWORD_RESET', 'User 2 reset password');
