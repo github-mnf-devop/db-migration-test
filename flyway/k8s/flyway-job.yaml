@@ -8,14 +8,14 @@ spec:
     spec:
       restartPolicy: Never
       containers:
-      - name: flyway
-        image: flyway/flyway:10
-        command: ["flyway", "migrate", "-configFiles=/flyway/conf/flyway.conf"]
-        volumeMounts:
-          - name: flyway-sql
-            mountPath: /flyway/sql
-          - name: flyway-conf
-            mountPath: /flyway/conf
+        - name: flyway
+          image: flyway/flyway:10
+          command: ["flyway", "migrate", "-configFiles=/flyway/conf/flyway.conf"]
+          volumeMounts:
+            - name: flyway-sql
+              mountPath: /flyway/sql
+            - name: flyway-conf
+              mountPath: /flyway/conf
       volumes:
         - name: flyway-sql
           configMap:
