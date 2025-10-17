@@ -28,6 +28,7 @@ jobs:
 
       - name: Generate Flyway Conf ConfigMap
         run: |
+          mkdir -p flyway/k8s
           kubectl create configmap flyway-conf \
             --from-file=flyway.conf \
             -n db-migration-demo \
