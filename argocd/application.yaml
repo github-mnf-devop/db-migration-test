@@ -6,11 +6,11 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/github-mnf-devop/db-migration.git'
+    repoURL: 'https://github.com/github-mnf-devop/db-migration-test.git'
     targetRevision: main
-    path: flyway
+    path: flyway/k8s
   destination:
-    server: https://kubernetes.default.svc
+    server: https://kubernetes.default.svc #“deploy to the same cluster where ArgoCD itself is running.”
     namespace: db-migration-demo
   syncPolicy:
     automated:
