@@ -2,7 +2,7 @@ name: Flyway Migration Auto Sync
 on:
  push:
    paths:
-     - 'flyway/sql/**'
+     - main
  workflow_dispatch:
 jobs:
  migrate:
