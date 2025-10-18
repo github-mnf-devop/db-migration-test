@@ -2,7 +2,7 @@ name: ArgoCD Flyway Migration Sync
 on:
  push:
    paths:
-     - 'flyway/sql/**'   # كل ما يحصل تعديل على سكريبت في SQL
+     - 'flyway/sql/**'   
 jobs:
  sync:
    runs-on: ubuntu-latest
