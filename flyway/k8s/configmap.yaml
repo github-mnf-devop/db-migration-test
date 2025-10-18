@@ -24,3 +24,11 @@ data:
       id SERIAL PRIMARY KEY,
       order_name VARCHAR(100)
     );
+
+  V4__add_customers_table.sql: |
+    -- V4: add customers table
+    CREATE TABLE batates (
+    id SERIAL PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    order_date TIMESTAMP DEFAULT NOW()
+    );
