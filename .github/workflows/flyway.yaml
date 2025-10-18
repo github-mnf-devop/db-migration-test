@@ -1,32 +1,40 @@
 name: ArgoCD Flyway Migration Sync
 on:
- push:
-   branches:
-     - main 
+  push:
+    branches:
+      - main 
 jobs:
- sync:
-   runs-on: ubuntu-latest
-   steps:
-     - name: 🧩 Checkout repository
-       uses: actions/checkout@v4
-     - name: 🔧 Generate ConfigMap from SQL scripts
-       run: |
-         echo "🔧 Generating ConfigMap from flyway/sql/"
-         mkdir -p flyway/k8s
-         kubectl create configmap flyway-sql-config \
-           --from-file=flyway/sql/ \
-           --dry-run=client -o yaml > flyway/k8s/configmap.yaml
-     - name: 📝 Commit updated configmap.yaml
-       run: |
-         echo "📝 Committing updated configmap.yaml"
-         git config user.name "github-actions[bot]"
-         git config user.email "github-actions[bot]@users.noreply.github.com"
-         git add flyway/k8s/configmap.yaml
-         git commit -m "Update ConfigMap from SQL scripts" || echo "No changes to commit"
-         git push || echo "No changes to push"
-     - name: 🚀 Trigger ArgoCD Sync
-       run: |
-         echo "🚀 Triggering ArgoCD sync for flyway-migration-demo..."
-         curl -k -X POST \
-           -u "${{ secrets.ARGOCD_USERNAME }}:${{ secrets.ARGOCD_PASSWORD }}" \
-           "${{ secrets.ARGOCD_SERVER }}/api/v1/applications/flyway-migration-demo/sync"
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Generate ConfigMap from SQL scripts
+        run: |
+          echo "🔧 Generating ConfigMap from flyway/sql/"
+          mkdir -p flyway/k8s
+          kubectl create configmap flyway-sql-config \
+            --from-file=flyway/sql/ \
+            --dry-run=client -o yaml > flyway/k8s/configmap.yaml
+
+      - name: 📝 Commit updated configmap.yaml
+        run: |
+          echo "📝 Committing updated configmap.yaml"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add flyway/k8s/configmap.yaml
+          git commit -m "Update ConfigMap from SQL scripts" || echo "No changes to commit"
+          git push || echo "No changes to push"
+
+      - name: 🔄 Force ArgoCD to detect change
+        run: |
+          echo "🔄 Bumping ArgoCD annotation to force sync"
+          sed -i "s/run-time:.*/run-time: $(date +%s)/" flyway/k8s/flyway-job.yaml || echo "  run-time: $(date +%s)" >> flyway/k8s/flyway-job.yaml
+
+      - name: 🚀 Trigger ArgoCD Sync
+        run: |
+          echo "🚀 Triggering ArgoCD sync for flyway-migration-demo..."
+          curl -k -X POST \
+            -u "${{ secrets.ARGOCD_USERNAME }}:${{ secrets.ARGOCD_PASSWORD }}" \
+            "${{ secrets.ARGOCD_SERVER }}/api/v1/applications/flyway-migration-demo/sync"
