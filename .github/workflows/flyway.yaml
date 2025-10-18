@@ -1,8 +1,8 @@
 name: ArgoCD Flyway Migration Sync
 on:
  push:
-   paths:
-     - 'flyway/sql/**'   
+   branches:
+     - main 
 jobs:
  sync:
    runs-on: ubuntu-latest
