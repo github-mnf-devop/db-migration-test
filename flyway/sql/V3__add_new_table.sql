@@ -1,5 +1,0 @@
-CREATE TABLE IF NOT EXISTS test_data (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    created_at TIMESTAMP DEFAULT NOW()
-);
