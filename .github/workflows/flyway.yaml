@@ -15,13 +15,13 @@ jobs:
          echo "🔧 Generating ConfigMap from flyway/sql/"
          kubectl create configmap flyway-sql-config \
            --from-file=flyway/sql/ \
-           --dry-run=client -o yaml > k8s/configmap.yml
+           --dry-run=client -o yaml > k8s/configmap.yaml
      - name: Commit updated ConfigMap
        run: |
-         echo "📝 Committing updated configmap.yml"
+         echo "📝 Committing updated configmap.yaml"
          git config user.name "github-actions"
          git config user.email "actions@github.com"
-         git add k8s/configmap.yml
+         git add k8s/configmap.yaml
          git commit -m "Auto-update configmap with new SQL migrations" || echo "No changes to commit"
          git push
      - name: Trigger ArgoCD Sync
