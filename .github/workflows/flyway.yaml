@@ -1,7 +1,7 @@
 name: Flyway Migration Auto Sync
 on:
  push:
-   paths:
+   branches:
      - main
  workflow_dispatch:
 jobs:
