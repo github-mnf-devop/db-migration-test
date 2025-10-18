@@ -15,3 +15,8 @@ data:
       id SERIAL PRIMARY KEY,
       product_name VARCHAR(100)
     );
+  V3__add_orders_table.sql: |
+    CREATE TABLE orders (
+      id SERIAL PRIMARY KEY,
+      order_name VARCHAR(100)
+    );

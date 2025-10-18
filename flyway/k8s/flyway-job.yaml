@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: flyway-migration
+  name: flyway-migration-{{ .CommitSHA }}
   namespace: db-migration-demo
 spec:
   backoffLimit: 0
