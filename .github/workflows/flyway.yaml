@@ -1,18 +1,32 @@
-name: ArgoCD Sync on SQL Change
-
+name: Flyway Migration Auto Sync
 on:
-  push:
-    paths:
-      - 'flyway/sql/**'
-  workflow_dispatch:
-
+ push:
+   paths:
+     - 'flyway/sql/**'
+ workflow_dispatch:
 jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger ArgoCD Sync
-        run: |
-          echo "Triggering ArgoCD sync for flyway-migration-demo..."
-          curl -k -X POST \
-            -u "${{ secrets.ARGOCD_USERNAME }}:${{ secrets.ARGOCD_PASSWORD }}" \
-            "${{ secrets.ARGOCD_SERVER }}/api/v1/applications/flyway-migration-demo/sync"
+ migrate:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout repository
+       uses: actions/checkout@v4
+     - name: Generate new ConfigMap from SQL scripts
+       run: |
+         echo "🔧 Generating ConfigMap from flyway/sql/"
+         kubectl create configmap flyway-sql-config \
+           --from-file=flyway/sql/ \
+           --dry-run=client -o yaml > k8s/configmap.yml
+     - name: Commit updated ConfigMap
+       run: |
+         echo "📝 Committing updated configmap.yml"
+         git config user.name "github-actions"
+         git config user.email "actions@github.com"
+         git add k8s/configmap.yml
+         git commit -m "Auto-update configmap with new SQL migrations" || echo "No changes to commit"
+         git push
+     - name: Trigger ArgoCD Sync
+       run: |
+         echo "🚀 Triggering ArgoCD sync for flyway-migration-demo..."
+         curl -k -X POST \
+           -u "${{ secrets.ARGOCD_USERNAME }}:${{ secrets.ARGOCD_PASSWORD }}" \
+           "${{ secrets.ARGOCD_SERVER }}/api/v1/applications/flyway-migration-demo/sync"
