@@ -13,9 +13,10 @@ jobs:
      - name: Generate new ConfigMap from SQL scripts
        run: |
          echo "🔧 Generating ConfigMap from flyway/sql/"
+         mkdir -p flyway/k8s
          kubectl create configmap flyway-sql-config \
-           --from-file=flyway/sql/ \
-           --dry-run=client -o yaml > k8s/configmap.yaml
+          --from-file=flyway/sql/ \
+          --dry-run=client -o yaml > flyway/k8s/configmap.yaml
      - name: Commit updated ConfigMap
        run: |
          echo "📝 Committing updated configmap.yaml"
