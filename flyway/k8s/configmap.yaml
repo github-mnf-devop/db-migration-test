@@ -9,3 +9,9 @@ data:
       id SERIAL PRIMARY KEY,
       name VARCHAR(100)
     );
+  V2__add_products_table.sql: |
+    -- V2: add products table
+    CREATE TABLE products (
+      id SERIAL PRIMARY KEY,
+      product_name VARCHAR(100)
+    );
