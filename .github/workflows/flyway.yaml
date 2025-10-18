@@ -1,18 +1,35 @@
-name: Sync ArgoCD App on SQL Change
+name: Flyway SQL Sync
 
 on:
   push:
     paths:
-      - 'flyway/sql/**'   # Only trigger when SQL files change
+      - 'flyway/sql/**'   # Trigger only when SQL scripts change
   workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl for EKS
+        uses: aws-actions/eks-setup-kubectl@v1
+        with:
+          cluster-name: ${{ secrets.EKS_CLUSTER_NAME }}
+          region: ${{ secrets.AWS_REGION }}
+
+      - name: Recreate Flyway SQL ConfigMap
+        run: |
+          kubectl create configmap flyway-sql \
+            --from-file=flyway/sql/ \
+            -n db-migration-demo \
+            -o yaml --dry-run=client | kubectl apply -f -
+
       - name: Sync ArgoCD Application
         run: |
-          curl -k -X POST \
-            -H "Content-Type: application/json" \
-            -u ${{ secrets.ARGOCD_USERNAME }}:${{ secrets.ARGOCD_PASSWORD }} \
-            https://argocd-server/api/v1/applications/flyway-migration-demo/sync
+          argocd login ${{ secrets.ARGOCD_SERVER }} \
+            --username ${{ secrets.ARGOCD_USERNAME }} \
+            --password ${{ secrets.ARGOCD_PASSWORD }} \
+            --insecure
+          argocd app sync flyway-migration-demo

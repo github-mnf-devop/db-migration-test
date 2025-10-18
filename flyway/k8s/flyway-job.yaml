@@ -19,9 +19,9 @@ spec:
               "migrate"
             ]
           volumeMounts:
-            - name: flyway-sql
+            - name: sql
               mountPath: /flyway/sql
       volumes:
-        - name: flyway-sql
+        - name: sql
           configMap:
-            name: flyway-sql
+            name: flyway-sql-config

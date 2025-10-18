@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flyway-sql-config
+  namespace: db-migration-demo
+data:
+  V1__first_script.sql: |
+    -- V1: first script
+    CREATE TABLE users (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100)
+    );
+
+  V2__add_products_table.sql: |
+    -- V2: add products table
+    CREATE TABLE products (
+      id SERIAL PRIMARY KEY,
+      product_name VARCHAR(100)
+    );
+
+  V3__add_orders_table.sql: |
+    -- V3: add orders table
+    CREATE TABLE orders (
+      id SERIAL PRIMARY KEY,
+      order_name VARCHAR(100)
+    );
